@@ -4,14 +4,14 @@ import { ref } from 'vue';
 const msgMockList = ref(['hi', 'ok', 'bye'])
 const newMsg = ref('')
 
-const ws = new WebSocket('ws://localhost:3000/ws/send-msg')
+const ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/send-msg`)
 ws.onopen = () => {
     console.log('Websocket connection open')
 }
 ws.onmessage = (event) => {
     const body = JSON.parse(event.data)
     console.log("Server:", body.message)
-    msgMockList.value.push(newMsg)
+    msgMockList.value.push(body.message)
 }
 
 const handleMessage = () => {
