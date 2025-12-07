@@ -39,6 +39,7 @@ const accAndRefTknSetup = (res, accTkn, refTkn) => {
         maxAge: 1000 * 60
     })
     res.cookie('refresh_token', refTkn, {
+        path: '/',
         httpOnly: true,
         secure: true,
         sameSite: 'none',
@@ -46,7 +47,28 @@ const accAndRefTknSetup = (res, accTkn, refTkn) => {
     })
 }
 
+/** @param {Request} req @param {Response} res */
+const logoutUserHandler = (req, res) => {
+    try {
+        res.clearCookie('access_token', {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none'
+        })
+        res.clearCookie('refresh_token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none'
+        })
+        res.json({ message: 'user logged out' })
+    } catch (e) {
+        res.status(500).json({ message: 'failed to logout user', error: e.message })
+    }
+}
+
 export {
     signupUserHandler,
     loginUserHandler,
+    logoutUserHandler
 }

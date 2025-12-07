@@ -9,7 +9,7 @@ const router = createRouter(
                 path: '/',
                 name: 'Home',
                 component: () => import('./views/HomeView.vue'),
-                meta: { requiresAuth: true }
+                meta: { requiresAuth: false }
             },
             {
                 path: '/signup',
@@ -31,6 +31,7 @@ const router = createRouter(
                 path: '/chat',
                 name: 'Chat',
                 component: () => import('@/views/ChatView.vue'),
+                meta: { requiresAuth: true }
             },
             {
                 path: '/:pathMatch(.*)*',
@@ -43,7 +44,6 @@ const router = createRouter(
 
 router.beforeEach(async (to, from, next) => {
     if (to.matched.some(r => r.meta.requiresAuth)) {
-
         try {
             const userStore = useUserStore()
             const res = await fetch(`${import.meta.env.VITE_BACK_URL}/auth/info`, {
@@ -53,12 +53,15 @@ router.beforeEach(async (to, from, next) => {
             if (res.status === 401) {
                 console.error('Failed Auth:', body.error)
 
-                if (to.fullPath === '/') {
-                    console.log('no user logged in home')
-                    return next()
-                }
+                // if (to.fullPath === '/') {
+                //     console.log('no user logged in home')
+                //     return next()
+                // }
                 console.log('no user logged in')
-                return next('/login')
+                return next({
+                    path: '/login',
+                    query: { redirect: to.fullPath }
+                })
             }
             if (to.fullPath === '/') {
                 console.log('authorized user')

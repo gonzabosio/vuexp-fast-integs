@@ -1,9 +1,10 @@
 <script setup>
 import { loginUser } from '@/composables/userRegister';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { ref } from 'vue';
 
 const router = useRouter()
+const route = useRoute()
 
 const username = ref('')
 const password = ref('')
@@ -15,7 +16,8 @@ const handleLoginForm = async () => {
         console.error(res.error)
     } else {
         console.log(res.message)
-        router.push('/menu')
+        const redirect = route.query.redirect || '/menu'
+        router.push(redirect)
     }
 }
 </script>

@@ -68,7 +68,37 @@ const loginUser = async (username, password) => {
     }
 }
 
+const logoutUser = async () => {
+    console.log('logout user called')
+    try {
+        const res = await fetch(`${import.meta.env.VITE_BACK_URL}/user/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+        if (!res.ok) {
+            const body = await res.json()
+            return {
+                message: 'Login Failed',
+                error: body.error
+            }
+        } else {
+            const body = await res.json()
+            return {
+                message: body.message,
+                error: null
+            }
+        }
+    }
+    catch (e) {
+        return {
+            message: 'Login Failed',
+            error: e.message
+        }
+    }
+}
+
 export {
     signupUser,
-    loginUser
+    loginUser,
+    logoutUser
 }
